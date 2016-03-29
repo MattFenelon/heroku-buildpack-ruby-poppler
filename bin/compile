@@ -26,8 +26,8 @@ function exports() {
   local prefix_dir=$1
 
   cat <<HDOC
-  export PKG_CONFIG_PATH="$prefix_dir/lib/pkgconfig:$PKG_CONFIG_PATH"
-  export LD_LIBRARY_PATH="$prefix_dir/lib:$LD_LIBRARY_PATH"
+  export PKG_CONFIG_PATH="$prefix_dir/lib/pkgconfig:${PKG_CONFIG_PATH: }"
+  export LD_LIBRARY_PATH="$prefix_dir/lib:${LD_LIBRARY_PATH: }"
 HDOC
 }
 
