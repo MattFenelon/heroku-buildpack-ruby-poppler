@@ -22,6 +22,15 @@ function topic() {
   echo "-----> $*"
 }
 
+function exports() {
+  local prefix_dir=$1
+
+  cat <<HDOC
+  export PKG_CONFIG_PATH="$prefix_dir/lib/pkgconfig:$PKG_CONFIG_PATH"
+  export LD_LIBRARY_PATH="$prefix_dir/lib:$LD_LIBRARY_PATH"
+HDOC
+}
+
 mkdir -p $DOWNLOAD_DIR
 cd $DOWNLOAD_DIR
 
@@ -35,8 +44,13 @@ cd poppler-0.38.0
 make | indent
 make install | indent
 
+# Subsequent buildpacks need to know where the libraries are, based on the
+# $BUILDPATH, which is random, e.g. /tmp/build_1b673f33c9b7c4b2f548536d3b9d7e8e
 topic "Configuring environment for subsequent buildpacks"
-export PKG_CONFIG_PATH="$TARGET_DIR/lib/pkgconfig"
-export LD_LIBRARY_PATH="$TARGET_DIR/lib"
+exports "$TARGET_DIR" > $BUILDPACK_DIR/export
 
-export | grep -E -e ' (LD_LIBRARY_PATH|PKG_CONFIG_PATH)=' > $BUILDPACK_DIR/export
+# By the time the app is running, all the buildpacks output has been combined
+# into the $HOME folder.
+topic "Configure application environment"
+mkdir -p $BUILD_DIR/.profile.d
+exports "$HOME/vendor/poppler" > $BUILD_DIR/.profile.d/000_poppler.sh
