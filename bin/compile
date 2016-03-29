@@ -33,4 +33,6 @@ cd poppler-0.38.0
 make | indent
 make install | indent
 
-export PKG_CONFIG_PATH=$TARGET_DIR/lib/pkgconfig > $BUILDPACK_DIR/export
+export PKG_CONFIG_PATH=$TARGET_DIR/lib/pkgconfig
+
+export | grep -E -e ' (PKG_CONFIG_PATH)=' > $BUILDPACK_DIR/export
