@@ -1,0 +1,39 @@
+#!/usr/bin/env bash
+# bin/compile BUILD_DIR CACHE_DIR ENV_DIR
+
+# fail fast
+set -eu
+
+BUILD_DIR=$1
+CACHE_DIR=$2
+ENV_DIR=$3
+
+echo $BUILD_DIR
+echo $CACHE_DIR
+# DOWNLOAD_DIR=$CACHE_DIR/poppler
+# TARGET_DIR=$BUILD_DIR/vendor/poppler
+#
+# indent() {
+#   sed -u 's/^/       /'
+# }
+#
+# function topic() {
+#   echo "-----> $*"
+# }
+#
+# mkdir -p $DOWNLOAD_DIR
+# cd $DOWNLOAD_DIR
+#
+# topic "Downloading poppler source"
+# wget https://poppler.freedesktop.org/poppler-0.38.0.tar.xz | indent
+# tar -xf poppler-0.38.0.tar.xz | indent
+#
+# cd poppler-0.38.0
+# ./configure --prefix=$TARGET_DIR | indent
+# make | indent
+# make install | indent
+#
+# export PKG_CONFIG_PATH=$TARGET_DIR
+# export GEM_PATH=
+#
+# gem install poppler

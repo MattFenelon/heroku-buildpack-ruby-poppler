@@ -1,0 +1,5 @@
+#!/usr/bin/env bash
+# bin/detect BUILD_DIR
+
+echo "heroku-buildpack-ruby-poppler"
+exit 0
