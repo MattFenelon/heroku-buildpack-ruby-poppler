@@ -25,8 +25,8 @@ function exports() {
   local prefix_dir=$1
 
   cat <<HDOC
-  export PKG_CONFIG_PATH="$prefix_dir/lib/pkgconfig:PKG_CONFIG_PATH"
-  export LD_LIBRARY_PATH="$prefix_dir/lib:LD_LIBRARY_PATH"
+  export PKG_CONFIG_PATH="$prefix_dir/lib/pkgconfig:\$PKG_CONFIG_PATH"
+  export LD_LIBRARY_PATH="$prefix_dir/lib:\$LD_LIBRARY_PATH"
 HDOC
 }
 
@@ -46,7 +46,7 @@ make install | indent
 # Subsequent buildpacks need to know where the libraries are, based on the
 # $BUILDPATH, which is random, e.g. /tmp/build_1b673f33c9b7c4b2f548536d3b9d7e8e
 topic "Configuring environment for subsequent buildpacks"
-exports "$TARGET_DIR" > $BUILDPACK_DIR/export
+echo "$(exports "$TARGET_DIR")" > $BUILDPACK_DIR/export
 
 # By the time the app is running, all the buildpacks output has been combined
 # into the $HOME folder.
