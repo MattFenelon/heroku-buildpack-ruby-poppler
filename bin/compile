@@ -4,7 +4,6 @@
 # fail fast
 set -o errexit    # always exit on error
 set -o pipefail   # don't ignore exit codes when piping output
-set -o nounset    # fail on unset variables
 
 BUILD_DIR=$1
 CACHE_DIR=$2
@@ -26,8 +25,8 @@ function exports() {
   local prefix_dir=$1
 
   cat <<HDOC
-  export PKG_CONFIG_PATH="$prefix_dir/lib/pkgconfig:${PKG_CONFIG_PATH: }"
-  export LD_LIBRARY_PATH="$prefix_dir/lib:${LD_LIBRARY_PATH: }"
+  export PKG_CONFIG_PATH="$prefix_dir/lib/pkgconfig:PKG_CONFIG_PATH"
+  export LD_LIBRARY_PATH="$prefix_dir/lib:LD_LIBRARY_PATH"
 HDOC
 }
 
