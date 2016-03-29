@@ -34,8 +34,8 @@ mkdir -p $DOWNLOAD_DIR
 cd $DOWNLOAD_DIR
 
 topic "Downloading poppler source"
-wget --no-verbose --no-clobber --tries=10 https://poppler.freedesktop.org/poppler-0.38.0.tar.xz | indent
-tar -xf poppler-0.38.0.tar.xz | indent
+wget --no-verbose --no-clobber https://poppler.freedesktop.org/poppler-0.38.0.tar.xz | indent
+tar -xf poppler-0.38.0.tar.xz --skip-old-files | indent
 
 topic "Building poppler"
 cd poppler-0.38.0
