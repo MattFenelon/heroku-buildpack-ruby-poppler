@@ -7,31 +7,30 @@ set -eu
 BUILD_DIR=$1
 CACHE_DIR=$2
 ENV_DIR=$3
+BUILDPACK_DIR=`cd $(dirname $0); cd ..; pwd`
 
 DOWNLOAD_DIR=$CACHE_DIR/poppler
 TARGET_DIR=$BUILD_DIR/vendor/poppler
 
-export
+function indent() {
+  sed -u 's/^/       /'
+}
 
-# indent() {
-#   sed -u 's/^/       /'
-# }
-#
-# function topic() {
-#   echo "-----> $*"
-# }
-#
-# mkdir -p $DOWNLOAD_DIR
-# cd $DOWNLOAD_DIR
-#
-# topic "Downloading poppler source"
-# wget https://poppler.freedesktop.org/poppler-0.38.0.tar.xz | indent
-# tar -xf poppler-0.38.0.tar.xz | indent
-#
-# topic "Building poppler"
-# cd poppler-0.38.0
-# ./configure --prefix=$TARGET_DIR | indent
-# make | indent
-# make install | indent
-#
-# export PKG_CONFIG_PATH=$TARGET_DIR
+function topic() {
+  echo "-----> $*"
+}
+
+mkdir -p $DOWNLOAD_DIR
+cd $DOWNLOAD_DIR
+
+topic "Downloading poppler source"
+wget https://poppler.freedesktop.org/poppler-0.38.0.tar.xz | indent
+tar -xf poppler-0.38.0.tar.xz | indent
+
+topic "Building poppler"
+cd poppler-0.38.0
+./configure --prefix=$TARGET_DIR | indent
+make | indent
+make install | indent
+
+export PKG_CONFIG_PATH=$TARGET_DIR > $BUILDPACK_DIR/export
