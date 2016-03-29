@@ -52,4 +52,4 @@ echo "$(exports "$TARGET_DIR")" > $BUILDPACK_DIR/export
 # into the $HOME folder.
 topic "Configure application environment"
 mkdir -p $BUILD_DIR/.profile.d
-exports "$HOME/vendor/poppler" > $BUILD_DIR/.profile.d/000_poppler.sh
+exports "\$HOME/vendor/poppler" > $BUILD_DIR/.profile.d/000_poppler.sh
