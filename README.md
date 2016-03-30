@@ -23,8 +23,8 @@ for more information.
 
 ## Installation path
 
-Poppler is installed to /app/vendor/poppler. The installation path is added
-`LD_LIBRARY_PATH` so it can be found by linking programs.
+Poppler is installed to ``/app/vendor/poppler`. The installation path is appended
+`LD_LIBRARY_PATH`, which is used by other programs to find the shared library.
 
 ## License
 
