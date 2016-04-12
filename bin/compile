@@ -5,13 +5,18 @@
 set -o errexit    # always exit on error
 set -o pipefail   # don't ignore exit codes when piping output
 
+# Enable extended globbing
+shopt -s extglob
+
 BUILD_DIR=$1
 CACHE_DIR=$2
 ENV_DIR=$3
 BUILDPACK_DIR=`cd $(dirname $0); cd ..; pwd`
 
-DOWNLOAD_DIR=$CACHE_DIR/poppler
+WORKING_DIR=$CACHE_DIR/poppler
 TARGET_DIR=$BUILD_DIR/vendor/poppler
+
+POPPLER_VERSION=0.42.0
 
 function indent() {
   sed -u 's/^/       /'
@@ -30,18 +35,33 @@ function exports() {
 HDOC
 }
 
-mkdir -p $DOWNLOAD_DIR
-cd $DOWNLOAD_DIR
+mkdir -p $WORKING_DIR | indent
+cd $WORKING_DIR | indent
 
-topic "Downloading poppler source"
-wget --no-verbose --no-clobber https://poppler.freedesktop.org/poppler-0.38.0.tar.xz | indent
-tar -xf poppler-0.38.0.tar.xz --skip-old-files | indent
+topic "Cleaning up old poppler versions"
+rm -rf !(*${POPPLER_VERSION}*) | indent
 
-topic "Building poppler"
-cd poppler-0.38.0
+if [ -s poppler-${POPPLER_VERSION}.compiled.tar.gz]; then
+  topic "Extracting poppler-${POPPLER_VERSION} from previous build"
+  tar -xf poppler-${POPPLER_VERSION}.compiled.tar.xz --skip-old-files -C $TARGET_DIR | indent
+  exit 0
+fi
+
+topic "Downloading poppler-${POPPLER_VERSION} source"
+wget --no-verbose --no-clobber https://poppler.freedesktop.org/poppler-${POPPLER_VERSION}.tar.xz | indent
+tar -xf poppler-${POPPLER_VERSION}.tar.xz --skip-old-files | indent
+
+topic "Building poppler-${POPPLER_VERSION}"
+cd poppler-${POPPLER_VERSION}
 ./configure --prefix=$TARGET_DIR | indent
 make | indent
 make install | indent
+make clean | indent
+make distclean | indent
+
+topic "Packaging binary files for future builds"
+cd ..
+tar -zcvf poppler-${POPPLER_VERSION}.compiled.tar.gz -C $TARGET_DIR . | indent
 
 # Subsequent buildpacks need to know where the libraries are, based on the
 # $BUILDPATH, which is random, e.g. /tmp/build_1b673f33c9b7c4b2f548536d3b9d7e8e
