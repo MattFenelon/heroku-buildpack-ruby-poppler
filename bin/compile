@@ -63,6 +63,7 @@ topic "Packaging binary files for future builds"
 cd ..
 tar -zcvf poppler-${POPPLER_VERSION}.compiled.tar.gz -C $TARGET_DIR . | indent
 topic "Removing source from cache"
+rm -rf $TARGET_DIR | indent
 rm -rf poppler-${POPPLER_VERSION}/ | indent
 rm poppler-${POPPLER_VERSION}.tar.xz | indent
 
