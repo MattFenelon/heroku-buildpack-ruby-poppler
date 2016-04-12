@@ -41,7 +41,7 @@ cd $WORKING_DIR | indent
 topic "Cleaning up old poppler versions"
 rm -rf !(*${POPPLER_VERSION}*) | indent
 
-if [ -a poppler-${POPPLER_VERSION}.compiled.tar.gz ]; then
+if [ -a "poppler-${POPPLER_VERSION}.compiled.tar.gz" ]; then
   topic "Extracting poppler-${POPPLER_VERSION} from previous build"
   tar -xf poppler-${POPPLER_VERSION}.compiled.tar.xz --skip-old-files -C $TARGET_DIR | indent
   exit 0
