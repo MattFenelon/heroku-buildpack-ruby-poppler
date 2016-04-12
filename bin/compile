@@ -62,6 +62,9 @@ make distclean | indent
 topic "Packaging binary files for future builds"
 cd ..
 tar -zcvf poppler-${POPPLER_VERSION}.compiled.tar.gz -C $TARGET_DIR . | indent
+topic "Removing source from cache"
+rm -rf poppler-${POPPLER_VERSION}/ | indent
+rm poppler-${POPPLER_VERSION}.tar.xz | indent
 
 # Subsequent buildpacks need to know where the libraries are, based on the
 # $BUILDPATH, which is random, e.g. /tmp/build_1b673f33c9b7c4b2f548536d3b9d7e8e
