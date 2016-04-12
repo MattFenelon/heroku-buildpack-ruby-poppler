@@ -16,7 +16,7 @@ BUILDPACK_DIR=`cd $(dirname $0); cd ..; pwd`
 WORKING_DIR=$CACHE_DIR/poppler
 TARGET_DIR=$BUILD_DIR/vendor/poppler
 
-POPPLER_VERSION=0.38.0
+POPPLER_VERSION=0.42.0
 
 function indent() {
   sed -u 's/^/       /'
