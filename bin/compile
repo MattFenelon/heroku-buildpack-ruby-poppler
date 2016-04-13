@@ -38,6 +38,9 @@ HDOC
 mkdir -p $WORKING_DIR | indent
 cd $WORKING_DIR | indent
 
+topic "Cache directory contents"
+ls $WORKING_DIR | indent
+
 topic "Cleaning up old poppler versions"
 rm -rf !(*${POPPLER_VERSION}*) | indent
 
