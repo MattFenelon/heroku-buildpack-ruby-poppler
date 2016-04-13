@@ -17,6 +17,7 @@ WORKING_DIR=$CACHE_DIR/poppler
 TARGET_DIR=$BUILD_DIR/vendor/poppler
 
 POPPLER_VERSION=0.42.0
+BINARY_PACKAGE="poppler-${POPPLER_VERSION}-compiled.tar.gz"
 
 function indent() {
   sed -u 's/^/       /'
@@ -44,9 +45,9 @@ ls $WORKING_DIR | indent
 topic "Cleaning up old poppler versions"
 rm -rf !(*${POPPLER_VERSION}*) | indent
 
-if [ -a "poppler-${POPPLER_VERSION}.compiled.tar.gz" ]; then
+if [ -a "$BINARY_PACKAGE" ]; then
   topic "Extracting poppler-${POPPLER_VERSION} from previous build"
-  tar -xf poppler-${POPPLER_VERSION}.compiled.tar.xz --skip-old-files -C $TARGET_DIR | indent
+  tar -xf "$BINARY_PACKAGE" --skip-old-files -C $TARGET_DIR | indent
   exit 0
 fi
 
@@ -64,7 +65,8 @@ make distclean | indent
 
 topic "Packaging binary files for future builds"
 cd ..
-tar -zcvf poppler-${POPPLER_VERSION}.compiled.tar.gz -C $TARGET_DIR . | indent
+tar -zcvf "$BINARY_PACKAGE" -C $TARGET_DIR . | indent
+
 topic "Removing source from cache"
 rm -rf poppler-${POPPLER_VERSION}/ | indent
 rm poppler-${POPPLER_VERSION}.tar.xz | indent
