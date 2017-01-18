@@ -23,6 +23,18 @@ The buildpack installs [Poppler 0.42.0](https://poppler.freedesktop.org/releases
 0.42.0 is the last released version to work with the latest version of the poppler
 gem [3.0.8](https://rubygems.org/gems/poppler/versions/3.0.8).
 
+## Compilation
+
+The first-run of this buildpack will compile the poppler library. The
+compilation of the poppler library can take some time. Subsequent
+builds use a cached version of the compiled library, vastly decreasing the
+amount of time to install the buildpack.
+
+When the cache can't be used, the poppler library will need to be
+compiled again. This could happen when the poppler version has changed, or there
+have been enough changes to this buildpack that old cached versions can't be
+used.
+
 ## Installation path
 
 Poppler is installed on the dynos to `/app/vendor/poppler`. The installation
