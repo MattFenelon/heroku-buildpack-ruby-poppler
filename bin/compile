@@ -70,7 +70,7 @@ else
   topic "Caching precompiled package"
   cd $CACHED_PRECOMPILED_PACKAGE_DIR
   # Remove old cached precompiled packages
-  rm -r *.* | indent
+  rm -f *.* | indent
   # Package the compiled binaries
   tar -zcvf "$PRECOMPILED_PACKAGE_FILENAME" -C $TARGET_DIR . | indent
 fi
