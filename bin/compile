@@ -1,5 +1,11 @@
 #!/usr/bin/env bash
-# bin/compile BUILD_DIR CACHE_DIR ENV_DIR
+# usage: bin/compile BUILD_DIR CACHE_DIR ENV_DIR
+
+# TODO: Run make check
+# TODO: Lower output verbosity (do not output command output)
+# TODO: JPEG library switch
+# TODO: Version buildpack to force not using cache
+# TODO: Update poppler version
 
 # fail fast
 set -o errexit    # always exit on error
@@ -13,11 +19,13 @@ CACHE_DIR=$2
 ENV_DIR=$3
 BUILDPACK_DIR=`cd $(dirname $0); cd ..; pwd`
 
-WORKING_DIR=$CACHE_DIR/poppler
+WORKING_DIR=$BUILDPACK_DIR/tmp/
 TARGET_DIR=$BUILD_DIR/vendor/poppler
+CACHED_PRECOMPILED_PACKAGE_DIR=$CACHE_DIR/vendor/poppler
 
 POPPLER_VERSION=0.42.0
-BINARY_PACKAGE="poppler-${POPPLER_VERSION}-compiled.tar.gz"
+PRECOMPILED_PACKAGE_FILENAME="poppler-${POPPLER_VERSION}-compiled.tar.gz"
+CACHED_PRECOMPILED_PACKAGE_PATH=$CACHED_PRECOMPILED_PACKAGE_DIR/$PRECOMPILED_PACKAGE_FILENAME
 
 function indent() {
   sed -u 's/^/       /'
@@ -30,50 +38,47 @@ function topic() {
 function exports() {
   local prefix_dir=$1
 
-  cat <<HDOC
+  cat <<SHELL
   export PKG_CONFIG_PATH="$prefix_dir/lib/pkgconfig:\$PKG_CONFIG_PATH"
   export LD_LIBRARY_PATH="$prefix_dir/lib:\$LD_LIBRARY_PATH"
-HDOC
+SHELL
 }
 
 mkdir -p $WORKING_DIR | indent
-cd $WORKING_DIR | indent
+mkdir -p $TARGET_DIR | indent
+mkdir -p $CACHED_PRECOMPILED_PACKAGE_DIR | indent
 
-topic "Cache directory contents"
-ls $WORKING_DIR | indent
+cd $WORKING_DIR
 
-topic "Cleaning up old poppler versions"
-rm -rf !(*${POPPLER_VERSION}*) | indent
+topic "Compiling poppler"
+if [ -f $CACHED_PRECOMPILED_PACKAGE_PATH ]; then
+  topic "Using poppler-${POPPLER_VERSION}"
+  tar -xf "$CACHED_PRECOMPILED_PACKAGE_PATH" --skip-old-files -C $TARGET_DIR | indent
+else
+  topic "Downloading poppler-${POPPLER_VERSION} source"
+  wget --no-verbose --no-clobber https://poppler.freedesktop.org/poppler-${POPPLER_VERSION}.tar.xz | indent
+  tar -xf poppler-${POPPLER_VERSION}.tar.xz --skip-old-files | indent
 
-if [ -a "$BINARY_PACKAGE" ]; then
-  topic "Extracting poppler-${POPPLER_VERSION} from previous build"
-  tar -xf "$BINARY_PACKAGE" --skip-old-files -C $TARGET_DIR | indent
-  exit 0
+  topic "Building poppler-${POPPLER_VERSION}"
+  cd poppler-${POPPLER_VERSION}
+  ./configure --prefix="$TARGET_DIR" | indent
+  make | indent
+  make install | indent
+  make clean | indent
+  make distclean | indent
+
+  topic "Caching precompiled package"
+  cd $CACHED_PRECOMPILED_PACKAGE_DIR
+  # Remove old cached precompiled packages
+  rm -r *.* | indent
+  # Package the compiled binaries
+  tar -zcvf "$PRECOMPILED_PACKAGE_FILENAME" -C $TARGET_DIR . | indent
 fi
-
-topic "Downloading poppler-${POPPLER_VERSION} source"
-wget --no-verbose --no-clobber https://poppler.freedesktop.org/poppler-${POPPLER_VERSION}.tar.xz | indent
-tar -xf poppler-${POPPLER_VERSION}.tar.xz --skip-old-files | indent
-
-topic "Building poppler-${POPPLER_VERSION}"
-cd poppler-${POPPLER_VERSION}
-./configure --prefix="$TARGET_DIR" | indent
-make | indent
-make install | indent
-make clean | indent
-make distclean | indent
-
-topic "Packaging binary files for future builds"
-cd ..
-tar -zcvf "$BINARY_PACKAGE" -C $TARGET_DIR . | indent
-
-topic "Removing source from cache"
-rm -rf poppler-${POPPLER_VERSION}/ | indent
-rm poppler-${POPPLER_VERSION}.tar.xz | indent
 
 # Subsequent buildpacks need to know where the libraries are, based on the
 # $BUILDPATH, which is random, e.g. /tmp/build_1b673f33c9b7c4b2f548536d3b9d7e8e
 topic "Configuring environment for subsequent buildpacks"
+# Use echo to expand the variables that are escaped in the exports function.
 echo "$(exports "$TARGET_DIR")" > $BUILDPACK_DIR/export
 
 # By the time the app is running, all the buildpacks output has been combined
@@ -81,3 +86,5 @@ echo "$(exports "$TARGET_DIR")" > $BUILDPACK_DIR/export
 topic "Configure application environment"
 mkdir -p $BUILD_DIR/.profile.d
 exports "\$HOME/vendor/poppler" > $BUILD_DIR/.profile.d/000_poppler.sh
+
+echo ""
