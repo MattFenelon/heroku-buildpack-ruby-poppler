@@ -1,29 +1,33 @@
 # heroku-buildpack-ruby-poppler
 
-Builds the poppler library and installs on Heroku
+A Heroku buildpack for the [poppler](https://poppler.freedesktop.org/) library
+for use with the [poppler](https://rubygems.org/gems/poppler/) gem.
 
 ## Usage
 
-This buildpack works best with [heroku-buildpack-multi](https://github.com/ddollar/heroku-buildpack-multi) so that it can be used with your app's existing buildpacks.
+You can add additional buildpacks to your Heroku application with the
+`buildpacks:add` command.
 
-## Example
+```shell
+$ heroku buildpacks:add https://github.com/MattFenelon/heroku-buildpack-ruby-poppler --index 1
+```
 
-#### .buildpacks
-
-    https://github.com/MattFenelon/heroku-buildpack-ruby-poppler
-    https://github.com/heroku/heroku-buildpack-ruby
+The index is set to 1 to install the poppler library before it is needed by
+another buildpack, i.e. when bundler runs as part of the ruby
+buildpack.
 
 ## Versions
 
-The buildpack installs Poppler 0.42.0
+The buildpack installs [Poppler 0.42.0](https://poppler.freedesktop.org/releases.html)
 
 0.42.0 is the last released version to work with the latest version of the poppler
-gem (3.0.8).
+gem [3.0.8](https://rubygems.org/gems/poppler/versions/3.0.8).
 
 ## Installation path
 
-Poppler is installed to ``/app/vendor/poppler`. The installation path is appended
-`LD_LIBRARY_PATH`, which is used by other programs to find the shared library.
+Poppler is installed on the dynos to `/app/vendor/poppler`. The installation
+path is appended to the environment variable `LD_LIBRARY_PATH`, which is used
+by other programs to find the shared library.
 
 ## License
 
