@@ -18,10 +18,10 @@ buildpack.
 
 ## Versions
 
-The buildpack installs [Poppler 0.52.0](https://poppler.freedesktop.org/releases.html)
+The buildpack installs [Poppler 0.59.0](https://poppler.freedesktop.org/releases.html)
 
-0.52.0 is the last released version to work with the latest version of the poppler
-gem [3.0.8](https://rubygems.org/gems/poppler/versions/3.0.8).
+0.59.0 works with the latest version of the poppler
+gem [3.1.8](https://rubygems.org/gems/poppler/versions/3.0.8).
 
 ## Compilation
 
