@@ -61,7 +61,7 @@ else
 
   topic "Building poppler-${POPPLER_VERSION}"
   cd poppler-${POPPLER_VERSION}
-  ./configure --prefix="$TARGET_DIR" | indent
+  ./configure --prefix="$TARGET_DIR" --enable-libopenjpeg=unmaintained | indent
   make | indent
   make install | indent
   make clean | indent
