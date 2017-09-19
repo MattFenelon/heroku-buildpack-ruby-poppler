@@ -68,7 +68,7 @@ else
   wget --no-verbose --no-clobber http://archive.ubuntu.com/ubuntu/pool/main/g/gobject-introspection/gobject-introspection_1.46.0-3ubuntu1.dsc | indent
   wget --no-verbose --no-clobber http://archive.ubuntu.com/ubuntu/pool/main/g/gobject-introspection/gobject-introspection_1.46.0.orig.tar.xz | indent
   wget --no-verbose --no-clobber http://archive.ubuntu.com/ubuntu/pool/main/g/gobject-introspection/gobject-introspection_1.46.0-3ubuntu1.debian.tar.xz | indent
-  dpkg-source gobject-introspection_1.46.0-3ubuntu1.dsc | indent
+  dpkg-source -x gobject-introspection_1.46.0-3ubuntu1.dsc | indent
   pushd gobject-introspection-1.46.0/
     PATH="${WORKING_DIR}/flex/bin:$PATH" ./configure --prefix="$TARGET_DIR" | indent
     PATH="${WORKING_DIR}/flex/bin:$PATH" make | indent
