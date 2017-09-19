@@ -59,7 +59,7 @@ else
   wget --no-verbose --no-clobber https://github.com/westes/flex/files/981163/flex-2.6.4.tar.gz
   tar -xf flex-2.6.4.tar.gz --skip-old-files | indent
   pushd flex-2.6.4
-    ./configure --disable-static --disable-shared | indent
+    ./configure --prefix="${WORKING_DIR}/flex" --disable-static --disable-shared | indent
     make | indent
     make install | indent
   popd
@@ -68,9 +68,9 @@ else
   wget --no-verbose --no-clobber http://ftp.gnome.org/pub/GNOME/sources/gobject-introspection/1.48/gobject-introspection-1.48.0.tar.xz | indent
   tar -xf gobject-introspection-1.48.0.tar.xz --skip-old-files | indent
   pushd gobject-introspection-1.48.0
-    ./configure --prefix="$TARGET_DIR" | indent
-    make | indent
-    make install | indent
+    PATH="${WORKING_DIR}/flex/bin:$PATH" ./configure --prefix="$TARGET_DIR" | indent
+    PATH="${WORKING_DIR}/flex/bin:$PATH" make | indent
+    PATH="${WORKING_DIR}/flex/bin:$PATH" make install | indent
   popd
 
   topic "Downloading poppler-${POPPLER_VERSION} source"
