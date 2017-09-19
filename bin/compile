@@ -59,15 +59,17 @@ else
   wget --no-verbose --no-clobber https://github.com/westes/flex/files/981163/flex-2.6.4.tar.gz
   tar -xf flex-2.6.4.tar.gz --skip-old-files | indent
   pushd flex-2.6.4
-    ./configure --prefix="${WORKING_DIR}/flex" --disable-static --disable-shared | indent
+    ./configure --prefix="${WORKING_DIR}/flex" | indent
     make | indent
     make install | indent
   popd
 
   topic "Installing gobject-introspection"
-  wget --no-verbose --no-clobber http://ftp.gnome.org/pub/GNOME/sources/gobject-introspection/1.48/gobject-introspection-1.48.0.tar.xz | indent
-  tar -xf gobject-introspection-1.48.0.tar.xz --skip-old-files | indent
-  pushd gobject-introspection-1.48.0
+  wget --no-verbose --no-clobber http://archive.ubuntu.com/ubuntu/pool/main/g/gobject-introspection/gobject-introspection_1.46.0-3ubuntu1.dsc | indent
+  wget --no-verbose --no-clobber http://archive.ubuntu.com/ubuntu/pool/main/g/gobject-introspection/gobject-introspection_1.46.0.orig.tar.xz | indent
+  wget --no-verbose --no-clobber http://archive.ubuntu.com/ubuntu/pool/main/g/gobject-introspection/gobject-introspection_1.46.0-3ubuntu1.debian.tar.xz | indent
+  dpkg-source gobject-introspection_1.46.0-3ubuntu1.dsc | indent
+  pushd gobject-introspection-1.46.0/
     PATH="${WORKING_DIR}/flex/bin:$PATH" ./configure --prefix="$TARGET_DIR" | indent
     PATH="${WORKING_DIR}/flex/bin:$PATH" make | indent
     PATH="${WORKING_DIR}/flex/bin:$PATH" make install | indent
