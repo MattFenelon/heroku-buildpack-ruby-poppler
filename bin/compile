@@ -75,6 +75,17 @@ else
     PATH="${WORKING_DIR}/flex/bin:$PATH" make install | indent
   popd
 
+  topic "Installing gir1.2-gdkpixbuf-2.0"
+  wget --no-verbose --no-clobber http://archive.ubuntu.com/ubuntu/pool/main/g/gdk-pixbuf/gdk-pixbuf_2.32.2-1ubuntu1.3.dsc | indent
+  wget --no-verbose --no-clobber http://archive.ubuntu.com/ubuntu/pool/main/g/gdk-pixbuf/gdk-pixbuf_2.32.2.orig.tar.xz | indent
+  wget --no-verbose --no-clobber http://archive.ubuntu.com/ubuntu/pool/main/g/gdk-pixbuf/gdk-pixbuf_2.32.2-1ubuntu1.3.debian.tar.xz | indent
+  dpkg-source -x gdk-pixbuf_2.32.2-1ubuntu1.3.dsc | indent
+  pushd gdk-pixbuf-2.32.2/
+    ./configure --prefix="$TARGET_DIR" | indent
+    make | indent
+    make install | indent
+  popd
+
   topic "Downloading poppler-${POPPLER_VERSION} source"
   wget --no-verbose --no-clobber https://poppler.freedesktop.org/poppler-${POPPLER_VERSION}.tar.xz | indent
   tar -xf poppler-${POPPLER_VERSION}.tar.xz --skip-old-files | indent
