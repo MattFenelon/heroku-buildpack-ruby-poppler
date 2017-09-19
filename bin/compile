@@ -41,6 +41,7 @@ function exports() {
   cat <<SHELL
   export PKG_CONFIG_PATH="$prefix_dir/lib/pkgconfig:\$PKG_CONFIG_PATH"
   export LD_LIBRARY_PATH="$prefix_dir/lib:\$LD_LIBRARY_PATH"
+  export GI_TYPELIB_PATH="$prefix_dir/lib:\$GI_TYPELIB_PATH"
 SHELL
 }
 
