@@ -41,7 +41,6 @@ function exports() {
   cat <<SHELL
   export PKG_CONFIG_PATH="$prefix_dir/lib/pkgconfig:\$PKG_CONFIG_PATH"
   export LD_LIBRARY_PATH="$prefix_dir/lib:\$LD_LIBRARY_PATH"
-  export GI_TYPELIB_PATH="$prefix_dir/lib:\$GI_TYPELIB_PATH"
 SHELL
 }
 
@@ -58,17 +57,17 @@ if [ -f $CACHED_PRECOMPILED_PACKAGE_PATH ]; then
 else
   topic "Installing Flex"
   wget --no-verbose --no-clobber https://github.com/westes/flex/files/981163/flex-2.6.4.tar.gz
-  tar -xf flex-2.6.4.tar.gz --skip-old-files | indent
+  tar -xf flex-2.6.4.tar.gz --skip-old-files
   pushd flex-2.6.4
-    ./configure --prefix="${WORKING_DIR}/flex" | indent
-    make | indent
-    make install | indent
+    ./configure --prefix="${WORKING_DIR}/flex"
+    make
+    make install
   popd
 
   topic "Installing gobject-introspection"
-  wget --no-verbose --no-clobber http://archive.ubuntu.com/ubuntu/pool/main/g/gobject-introspection/gobject-introspection_1.46.0-3ubuntu1.dsc | indent
-  wget --no-verbose --no-clobber http://archive.ubuntu.com/ubuntu/pool/main/g/gobject-introspection/gobject-introspection_1.46.0.orig.tar.xz | indent
-  wget --no-verbose --no-clobber http://archive.ubuntu.com/ubuntu/pool/main/g/gobject-introspection/gobject-introspection_1.46.0-3ubuntu1.debian.tar.xz | indent
+  wget --no-verbose --no-clobber http://archive.ubuntu.com/ubuntu/pool/main/g/gobject-introspection/gobject-introspection_1.46.0-3ubuntu1.dsc \
+    http://archive.ubuntu.com/ubuntu/pool/main/g/gobject-introspection/gobject-introspection_1.46.0.orig.tar.xz \
+    http://archive.ubuntu.com/ubuntu/pool/main/g/gobject-introspection/gobject-introspection_1.46.0-3ubuntu1.debian.tar.xz | indent
   dpkg-source -x gobject-introspection_1.46.0-3ubuntu1.dsc | indent
   pushd gobject-introspection-1.46.0/
     PATH="${WORKING_DIR}/flex/bin:$PATH" ./configure --prefix="$TARGET_DIR" | indent
@@ -77,12 +76,15 @@ else
   popd
 
   topic "Installing gir1.2-gdkpixbuf-2.0"
-  wget --no-verbose --no-clobber http://archive.ubuntu.com/ubuntu/pool/main/g/gdk-pixbuf/gdk-pixbuf_2.32.2-1ubuntu1.3.dsc | indent
-  wget --no-verbose --no-clobber http://archive.ubuntu.com/ubuntu/pool/main/g/gdk-pixbuf/gdk-pixbuf_2.32.2.orig.tar.xz | indent
-  wget --no-verbose --no-clobber http://archive.ubuntu.com/ubuntu/pool/main/g/gdk-pixbuf/gdk-pixbuf_2.32.2-1ubuntu1.3.debian.tar.xz | indent
+  wget --no-verbose --no-clobber http://archive.ubuntu.com/ubuntu/pool/main/g/gdk-pixbuf/gdk-pixbuf_2.32.2-1ubuntu1.3.dsc \
+    http://archive.ubuntu.com/ubuntu/pool/main/g/gdk-pixbuf/gdk-pixbuf_2.32.2.orig.tar.xz \
+    http://archive.ubuntu.com/ubuntu/pool/main/g/gdk-pixbuf/gdk-pixbuf_2.32.2-1ubuntu1.3.debian.tar.xz | indent
   dpkg-source -x gdk-pixbuf_2.32.2-1ubuntu1.3.dsc | indent
   pushd gdk-pixbuf-2.32.2/
-    ./configure --prefix="$TARGET_DIR" | indent
+    # --enable-introspection will force a fail if gobject-introspection can't be
+    # found. The typelib file, created by gobject-introspection (and when
+    # --enable-introspection is true), is required by the gdk_pixbuf2 gem.
+    PKG_CONFIG_PATH="$TARGET_DIR/lib/pkgconfig:$PKG_CONFIG_PATH" ./configure --prefix="$TARGET_DIR" --enable-introspection | indent
     make | indent
     make install | indent
   popd
@@ -93,6 +95,8 @@ else
 
   topic "Building poppler-${POPPLER_VERSION}"
   cd poppler-${POPPLER_VERSION}
+  # --enable-libopenjpeg=unmaintained uses the internal JPEG lib. The libraries
+  # for the other options are not available on Heroku.
   ./configure --prefix="$TARGET_DIR" --enable-libopenjpeg=unmaintained | indent
   make | indent
   make install | indent
