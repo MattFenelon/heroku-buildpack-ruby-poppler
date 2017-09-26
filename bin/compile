@@ -17,15 +17,15 @@ shopt -s extglob
 BUILD_DIR=$1
 CACHE_DIR=$2
 ENV_DIR=$3
-BUILDPACK_DIR=`cd $(dirname $0); cd ..; pwd`
+BUILDPACK_DIR=$(cd $(dirname $0); cd ..; pwd)
 
-WORKING_DIR=$BUILDPACK_DIR/tmp/
-TARGET_DIR=$BUILD_DIR/vendor/poppler
-CACHED_PRECOMPILED_PACKAGE_DIR=$CACHE_DIR/vendor/poppler
+WORKING_DIR="${BUILDPACK_DIR}/tmp/"
+TARGET_DIR="${BUILD_DIR}/vendor/poppler"
+CACHED_PRECOMPILED_PACKAGE_DIR="${CACHE_DIR}/vendor/poppler"
 
-POPPLER_VERSION=0.52.0
+POPPLER_VERSION="0.59.0"
 PRECOMPILED_PACKAGE_FILENAME="poppler-${POPPLER_VERSION}-compiled.tar.gz"
-CACHED_PRECOMPILED_PACKAGE_PATH=$CACHED_PRECOMPILED_PACKAGE_DIR/$PRECOMPILED_PACKAGE_FILENAME
+CACHED_PRECOMPILED_PACKAGE_PATH="${CACHED_PRECOMPILED_PACKAGE_DIR}/${PRECOMPILED_PACKAGE_FILENAME}"
 
 function indent() {
   sed -u 's/^/       /'
@@ -41,6 +41,7 @@ function exports() {
   cat <<SHELL
   export PKG_CONFIG_PATH="$prefix_dir/lib/pkgconfig:\$PKG_CONFIG_PATH"
   export LD_LIBRARY_PATH="$prefix_dir/lib:\$LD_LIBRARY_PATH"
+  export GI_TYPELIB_PATH="$prefix_dir/lib/girepository-1.0:\$GI_TYPELIB_PATH"
 SHELL
 }
 
@@ -55,13 +56,50 @@ if [ -f $CACHED_PRECOMPILED_PACKAGE_PATH ]; then
   topic "Using poppler-${POPPLER_VERSION}"
   tar -xf "$CACHED_PRECOMPILED_PACKAGE_PATH" --skip-old-files -C $TARGET_DIR | indent
 else
+  # Flex is required to compile gobject-introspection
+  topic "Installing Flex"
+  wget --no-verbose --no-clobber https://github.com/westes/flex/files/981163/flex-2.6.4.tar.gz
+  tar -xf flex-2.6.4.tar.gz --skip-old-files
+  pushd flex-2.6.4
+    ./configure --prefix="${WORKING_DIR}/flex"
+    make
+    make install
+  popd
+
+  topic "Installing gobject-introspection"
+  wget --no-verbose --no-clobber http://archive.ubuntu.com/ubuntu/pool/main/g/gobject-introspection/gobject-introspection_1.46.0-3ubuntu1.dsc \
+    http://archive.ubuntu.com/ubuntu/pool/main/g/gobject-introspection/gobject-introspection_1.46.0.orig.tar.xz \
+    http://archive.ubuntu.com/ubuntu/pool/main/g/gobject-introspection/gobject-introspection_1.46.0-3ubuntu1.debian.tar.xz | indent
+  dpkg-source -x gobject-introspection_1.46.0-3ubuntu1.dsc | indent
+  pushd gobject-introspection-1.46.0/
+    PATH="${WORKING_DIR}/flex/bin:$PATH" ./configure --prefix="$TARGET_DIR" | indent
+    PATH="${WORKING_DIR}/flex/bin:$PATH" make | indent
+    PATH="${WORKING_DIR}/flex/bin:$PATH" make install | indent
+  popd
+
+  topic "Installing gdkpixbuf-2.0"
+  wget --no-verbose --no-clobber http://archive.ubuntu.com/ubuntu/pool/main/g/gdk-pixbuf/gdk-pixbuf_2.32.2-1ubuntu1.3.dsc \
+    http://archive.ubuntu.com/ubuntu/pool/main/g/gdk-pixbuf/gdk-pixbuf_2.32.2.orig.tar.xz \
+    http://archive.ubuntu.com/ubuntu/pool/main/g/gdk-pixbuf/gdk-pixbuf_2.32.2-1ubuntu1.3.debian.tar.xz | indent
+  dpkg-source -x gdk-pixbuf_2.32.2-1ubuntu1.3.dsc | indent
+  pushd gdk-pixbuf-2.32.2/
+    # --enable-introspection will force a fail if gobject-introspection can't be
+    # found. The typelib file, created by gobject-introspection (and when
+    # --enable-introspection is true), is required by the gdk_pixbuf2 gem.
+    PKG_CONFIG_PATH="$TARGET_DIR/lib/pkgconfig:$PKG_CONFIG_PATH" ./configure --prefix="$TARGET_DIR" --enable-introspection | indent
+    make | indent
+    make install | indent
+  popd
+
   topic "Downloading poppler-${POPPLER_VERSION} source"
   wget --no-verbose --no-clobber https://poppler.freedesktop.org/poppler-${POPPLER_VERSION}.tar.xz | indent
   tar -xf poppler-${POPPLER_VERSION}.tar.xz --skip-old-files | indent
 
   topic "Building poppler-${POPPLER_VERSION}"
   cd poppler-${POPPLER_VERSION}
-  ./configure --prefix="$TARGET_DIR" | indent
+  # --enable-libopenjpeg=unmaintained uses the internal JPEG lib. The libraries
+  # for the other options are not available on Heroku.
+  ./configure --prefix="$TARGET_DIR" --enable-libopenjpeg=unmaintained | indent
   make | indent
   make install | indent
   make clean | indent

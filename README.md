@@ -18,10 +18,10 @@ buildpack.
 
 ## Versions
 
-The buildpack installs [Poppler 0.52.0](https://poppler.freedesktop.org/releases.html)
+The buildpack installs [Poppler 0.59.0](https://poppler.freedesktop.org/releases.html)
 
-0.52.0 is the last released version to work with the latest version of the poppler
-gem [3.0.8](https://rubygems.org/gems/poppler/versions/3.0.8).
+0.59.0 works with the latest version of the poppler
+gem [3.1.8](https://rubygems.org/gems/poppler/versions/3.1.8).
 
 ## Compilation
 
@@ -38,12 +38,12 @@ used.
 ## Installation path
 
 Poppler is installed on the dynos to `/app/vendor/poppler`. The installation
-path is appended to the environment variable `LD_LIBRARY_PATH`, which is used
-by other programs to find the shared library.
+path is appended to the environment variables `LD_LIBRARY_PATH` and
+`PKG_CONFIG_PATH`, which are used to find the shared libraries.
 
 ## License
 
-Copyright 2016 Matthew Fenelon
+Copyright 2017 Matthew Fenelon
 
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
