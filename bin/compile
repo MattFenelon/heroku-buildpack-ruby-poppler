@@ -41,6 +41,7 @@ function exports() {
   cat <<SHELL
   export PKG_CONFIG_PATH="$prefix_dir/lib/pkgconfig:\$PKG_CONFIG_PATH"
   export LD_LIBRARY_PATH="$prefix_dir/lib:\$LD_LIBRARY_PATH"
+  export GI_TYPELIB_PATH="$prefix_dir/lib/girepository-1.0:\$GI_TYPELIB_PATH"
 SHELL
 }
 
@@ -55,6 +56,7 @@ if [ -f $CACHED_PRECOMPILED_PACKAGE_PATH ]; then
   topic "Using poppler-${POPPLER_VERSION}"
   tar -xf "$CACHED_PRECOMPILED_PACKAGE_PATH" --skip-old-files -C $TARGET_DIR | indent
 else
+  # Flex is required to compile gobject-introspection
   topic "Installing Flex"
   wget --no-verbose --no-clobber https://github.com/westes/flex/files/981163/flex-2.6.4.tar.gz
   tar -xf flex-2.6.4.tar.gz --skip-old-files
@@ -75,7 +77,7 @@ else
     PATH="${WORKING_DIR}/flex/bin:$PATH" make install | indent
   popd
 
-  topic "Installing gir1.2-gdkpixbuf-2.0"
+  topic "Installing gdkpixbuf-2.0"
   wget --no-verbose --no-clobber http://archive.ubuntu.com/ubuntu/pool/main/g/gdk-pixbuf/gdk-pixbuf_2.32.2-1ubuntu1.3.dsc \
     http://archive.ubuntu.com/ubuntu/pool/main/g/gdk-pixbuf/gdk-pixbuf_2.32.2.orig.tar.xz \
     http://archive.ubuntu.com/ubuntu/pool/main/g/gdk-pixbuf/gdk-pixbuf_2.32.2-1ubuntu1.3.debian.tar.xz | indent
