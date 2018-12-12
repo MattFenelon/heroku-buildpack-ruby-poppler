@@ -43,7 +43,7 @@ path is appended to the environment variables `LD_LIBRARY_PATH` and
 
 ## License
 
-Copyright 2017-2018 Matthew Fenelon
+Copyright 2017 Matthew Fenelon
 
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
