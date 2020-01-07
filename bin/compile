@@ -78,10 +78,10 @@ else
   popd
 
   topic "Installing gdkpixbuf-2.0"
-  wget --no-verbose --no-clobber http://archive.ubuntu.com/ubuntu/pool/main/g/gdk-pixbuf/gdk-pixbuf_2.32.2-1ubuntu1.5.dsc \
+  wget --no-verbose --no-clobber http://archive.ubuntu.com/ubuntu/pool/main/g/gdk-pixbuf/gdk-pixbuf_2.32.2-1ubuntu1.6.dsc \
     http://archive.ubuntu.com/ubuntu/pool/main/g/gdk-pixbuf/gdk-pixbuf_2.32.2.orig.tar.xz \
-    http://archive.ubuntu.com/ubuntu/pool/main/g/gdk-pixbuf/gdk-pixbuf_2.32.2-1ubuntu1.5.debian.tar.xz | indent
-  dpkg-source -x gdk-pixbuf_2.32.2-1ubuntu1.5.dsc | indent
+    http://archive.ubuntu.com/ubuntu/pool/main/g/gdk-pixbuf/gdk-pixbuf_2.32.2-1ubuntu1.6.debian.tar.xz | indent
+  dpkg-source -x gdk-pixbuf_2.32.2-1ubuntu1.6.dsc | indent
   pushd gdk-pixbuf-2.32.2/
     # --enable-introspection will force a fail if gobject-introspection can't be
     # found. The typelib file, created by gobject-introspection (and when
