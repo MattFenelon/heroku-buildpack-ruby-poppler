@@ -111,6 +111,11 @@ else
   rm -f *.* | indent
   # Package the compiled binaries
   tar -zcvf "$PRECOMPILED_PACKAGE_FILENAME" -C $TARGET_DIR . | indent
+
+  echo "Displaying the version of pdftoppm"
+  echo $PATH
+  which pdftoppm
+  pdftoppm -v 
 fi
 
 # Subsequent buildpacks need to know where the libraries are, based on the
