@@ -61,7 +61,7 @@ else
   wget --no-verbose --no-clobber https://github.com/westes/flex/files/981163/flex-2.6.4.tar.gz
   tar -xf flex-2.6.4.tar.gz --skip-old-files
   pushd flex-2.6.4
-    ./configure --prefix="${WORKING_DIR}/flex"
+    ./configure --prefix="${WORKING_DIR}/flex" CFLAGS='-g -O2 -D_GNU_SOURCE'
     make
     make install
   popd
@@ -126,3 +126,4 @@ mkdir -p $BUILD_DIR/.profile.d
 exports "\$HOME/vendor/poppler" > $BUILD_DIR/.profile.d/000_poppler.sh
 
 echo ""
+
