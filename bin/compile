@@ -110,7 +110,7 @@ else
   # Remove old cached precompiled packages
   rm -f *.* | indent
   # Package the compiled binaries
-  tar -zcvf "$PRECOMPILED_PACKAGE_FILENAME" -C $TARGET_DIR . | indent  
+  tar -zcvf "$PRECOMPILED_PACKAGE_FILENAME" -C $TARGET_DIR . | indent
 fi
 
 # Subsequent buildpacks need to know where the libraries are, based on the
@@ -126,4 +126,3 @@ mkdir -p $BUILD_DIR/.profile.d
 exports "\$HOME/vendor/poppler" > $BUILD_DIR/.profile.d/000_poppler.sh
 
 echo ""
-
