@@ -124,5 +124,6 @@ echo "$(exports "$TARGET_DIR")" > $BUILDPACK_DIR/export
 topic "Configure application environment"
 mkdir -p $BUILD_DIR/.profile.d
 exports "\$HOME/vendor/poppler" > $BUILD_DIR/.profile.d/000_poppler.sh
+echo "export PATH=/app/vendor/poppler/bin:$PATH" >> $BUILD_DIR/.profile.d/000_poppler.sh
 
 echo ""
