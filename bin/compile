@@ -42,6 +42,7 @@ function exports() {
   export PKG_CONFIG_PATH="$prefix_dir/lib/pkgconfig:\$PKG_CONFIG_PATH"
   export LD_LIBRARY_PATH="$prefix_dir/lib:\$LD_LIBRARY_PATH"
   export GI_TYPELIB_PATH="$prefix_dir/lib/girepository-1.0:\$GI_TYPELIB_PATH"
+  export PATH="$prefix_dir/bin:$\PATH"
 SHELL
 }
 
