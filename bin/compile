@@ -42,6 +42,7 @@ function exports() {
   export PKG_CONFIG_PATH="$prefix_dir/lib/pkgconfig:\$PKG_CONFIG_PATH"
   export LD_LIBRARY_PATH="$prefix_dir/lib:\$LD_LIBRARY_PATH"
   export GI_TYPELIB_PATH="$prefix_dir/lib/girepository-1.0:\$GI_TYPELIB_PATH"
+  export PATH=/app/vendor/poppler/bin:$PATH
 SHELL
 }
 
@@ -124,6 +125,5 @@ echo "$(exports "$TARGET_DIR")" > $BUILDPACK_DIR/export
 topic "Configure application environment"
 mkdir -p $BUILD_DIR/.profile.d
 exports "\$HOME/vendor/poppler" > $BUILD_DIR/.profile.d/000_poppler.sh
-echo "export PATH=/app/vendor/poppler/bin:$PATH" >> $BUILD_DIR/.profile.d/000_poppler.sh
 
 echo ""
